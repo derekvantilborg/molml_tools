@@ -1,7 +1,7 @@
 import numpy as np
 from rdkit import Chem, DataStructs
 from rdkit.Chem import AllChem
-from Data import Molecule
+from Data.Molecule import Molecule
 
 
 def ecfp(molecule: Molecule, radius: int = 2, nbits: int = 1024):

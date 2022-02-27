@@ -1,5 +1,5 @@
 import numpy as np
-from Data import Molecule
+from Data.Molecule import Molecule
 
 
 def drug_like_descriptor(molecule: Molecule):

@@ -6,6 +6,7 @@ class Molecule:
     def __init__(self, smiles: str):
         self.smiles = smiles
         self.rdkit = Chem.MolFromSmiles(smiles)
+        self.scaffold = None
 
     def show(self, size: tuple[int, int] = (500, 500), kekulize: bool = True):
         """ Plot an image of the molecule """

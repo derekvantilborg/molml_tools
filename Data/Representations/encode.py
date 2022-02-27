@@ -1,7 +1,7 @@
 
 from Data.Representations import binary_fingerprints
 from Data.Representations import classical_descriptors
-from Data import Molecule
+from Data.Molecule import Molecule
 from rdkit import Chem, DataStructs
 import numpy as np
 
