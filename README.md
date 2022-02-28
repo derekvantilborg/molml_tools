@@ -4,4 +4,4 @@
 ![MolDox logo](img/logo.png?raw=true "Title")
 
 
-A collection of tools for molecular machine learning
+A collection of tools for molecular machine learning. Work in progress
