@@ -8,7 +8,7 @@ class Molecule:
         self.rdkit = Chem.MolFromSmiles(smiles)
         self.scaffold = None
 
-    def show(self, size: tuple[int, int] = (500, 500), kekulize: bool = True):
+    def show(self, size: tuple = (500, 500), kekulize: bool = True):
         """ Plot an image of the molecule """
         from rdkit.Chem import Draw
         Draw.ShowMol(self.rdkit, size=size, kekulize=kekulize)

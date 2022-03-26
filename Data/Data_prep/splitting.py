@@ -33,3 +33,16 @@ def cluster_split_molecules():
 
 def cluster_stratified_split_molecules():
     pass
+
+def fold_split_random():
+    pass
+
+def fold_split_stratified():
+    pass
+
+def fold_split_knn():
+    pass
+
+def fold_split_butina():
+    pass
+
