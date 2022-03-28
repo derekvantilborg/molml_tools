@@ -8,5 +8,22 @@ setup(
     license='MIT',
     author='Derek van Tilborg',
     author_email='d.w.v.tilborg@tue.nl',
-    description='A collection of tools for molecular machine learning'
+    description='A collection of tools for molecular machine learning',
+    install_requires=[
+        'tqdm',
+        'requests',
+        'twine',
+        'importlib-metadata',
+        'pandas',
+        'numpy',
+        'matplotlib',
+        'seaborn',
+        'chembl_webresource_client',
+        'scikit-learn',
+        'scikit-optimize',
+        'matplotlib',
+        'rdkit-pypi'
+    ],
+    include_package_data=True,
+    package_data={'': ['example_data/*']}
 )
