@@ -1,11 +1,16 @@
 # conda install scikit-learn
 # conda install -c conda-forge scikit-optimize
 # conda install -c conda-forge rdkit
+import pandas as pd
 
-from Tools.Clustering.butina import cluster_molecules
+# from Tools.Clustering.butina import cluster_molecules
 from Data.datastructures import Dataset
 from Data.utils import read_csv
-from Data.Representations.binary_fingerprints import ecfp
+from Representations.descriptors import ecfp, maccs
+from Representations.strings import smiles_one_hot
+from sklearn.ensemble import GradientBoostingRegressor
+from Tools.optimize import BayesianOpt
+from Tools.metrics import rmse
 import numpy as np
 
 def minlog(x):
@@ -13,129 +18,76 @@ def minlog(x):
 
 molecules = read_csv(f"example_data/CHEMBL2047_EC50.csv", smiles_col='smiles', label_col='exp_mean [nM]')
 
-data = Dataset(molecules, transform=ecfp, target_transform=minlog)
+data = Dataset(molecules[:50], name='CHEMBL2047', transform=smiles_one_hot, target_transform=minlog)
+data.process()
 
-data[12]
-data.show(12)
+data.show(10)
 
+from Tools.cluster import spectral
+from Viz.multivariate import TSNE, PCA
+import seaborn as sns
 
-cluster_molecules(molecules, cutoff=0.4, scaffold=True)
-
-
-from Data.Data_prep.splitting import random_split_molecules
-
-train, test, val = random_split_molecules(molecules, test_split=0.2, val_split=0.2)
-
-len(train) / len(molecules)
-len(test) / len(molecules)
-len(val) / len(molecules)
-
-from MoleculeACE.benchmark import models
+clusters = spectral(molecules, k=10)
 
 
-from MoleculeACE.benchmark import load_data, models, evaluation, utils
+tsne = TSNE(n_components=2, perplexity=50, n_iter=500)
+tsne.fit(molecules, use_n_principal_components=50)
+tsne.show(color_by=clusters, palette=sns.color_palette("hls", 10))
 
-# Setup some variables
-dataset = 'CHEMBL287_Ki'
-descriptor = utils.Descriptors.ATTENTIVE_GRAPH
-algorithm = utils.Algorithms.AFP
-path_to_model = 'path_to_model.pkl'
+pca = PCA(n_components=2)
+pca.fit(molecules)
+pca.show(color_by=clusters, palette=sns.color_palette("hls", 10))
 
 
 
-def cross_validate(model, x, y, evaluate, cv: int = 5):
-    import numpy as np
+from Tools.splitting import stratified_split_molecules
 
-    scores = []
-
-    for i in cv:
-        mod = model.train(x_train_i, y_train_i)
-        pred = mod.predict(x_test_i)
-        score = evaluate(pred, y_test_i)
-        scores.append(score)
-
-    estimated_score = np.mean(scores)
-
-    return estimated_score
-
-from sklearn.model_selection import StratifiedKFold, ShuffleSplit
-
-# if stratified:
-#     has_cliffs = [1 if i in self.cliffs.cliff_mols_soft_consensus else 0 for i in self.smiles_train]
-#     skf = StratifiedKFold(n_splits=n_splits, random_state=random_state, shuffle=True)
-#     cv_folds = skf.split(self.x_train, has_cliffs)
-# else:
-
-ss = ShuffleSplit(n_splits=5, random_state=42)
-cv_folds = [(i, j) for i, j in ss.split(data.smiles)]
-
-cv_folds_lst = []
-for i in cv_folds:
-
-    pass
-
-data.smiles
+train, test, val = stratified_split_molecules(molecules, labels=clusters)
 
 
-def fold_split_random(dataset: Dataset, folds: int = 5, random_state: int = 42):
-    from sklearn.model_selection import ShuffleSplit
+data = Dataset(molecules, name='CHEMBL2047', transform=ecfp, target_transform=minlog)
+data.process()
 
-    ss = ShuffleSplit(n_splits=folds, random_state=random_state)
-    return [(i, j) for i, j in ss.split(dataset.smiles)]
+data.show(13)
 
+hpm = {"learning_rate": [0.1, 0.01],
+       "max_depth": [1, 2, 3, 4, 5, 6, 7, 8],
+       "n_estimators": [5, 10, 20, 100, 200, 300]}
 
-def fold_split_knn(dataset, k: int = 10, random_state: int = 42):
-    from sklearn.cluster import KMeans
+model = GradientBoostingRegressor
 
-    clust = KMeans(n_clusters=10)
-    clust.fit(x)
-
-
-    pass
-
-
-arr = []
-for idx, m in enumerate(data):
-
-    pass
+opt = BayesianOpt(model, data)
+opt.opt(hpm, rmse, cv=5, n_calls=20)
+opt.show()
 
 
-
-fold_split_random(data)
-
-
-[(train_idx, test_idx), (), ()]
-
-
-
-## TODO
-# make cross-validation class
-# cross validation function
-# make dataset class
-# bayesian optimization class
-# evol optimization class
+# def fold_split_knn(dataset, k: int = 10, random_state: int = 42):
+#     from sklearn.cluster import KMeans
+#
+#     clust = KMeans(n_clusters=10)
+#     clust.fit(x)
 
 
-# molecules = read_csv(file)
-# train, test = split_mols_butina()     split_mols_knn()
-# train_data = Dataset(train)
-# test_data = Dataset(test)
+history = [(1,0.7201,0.7201),(2,0.6329,0.6329),(3,0.6305,0.6305),(4,0.6323,0.6305),(5,0.7195,0.6305),(6,0.6137,0.6137),
+           (7,0.6201,0.6137),(8,0.6239,0.6137),(9,0.6404,0.6137),(10,0.6264,0.6137),(11,0.6718,0.6137),(12,0.6368,0.6137),
+           (13,0.6337,0.6137),(14,0.6502,0.6137),(15,0.6235,0.6137),(16,0.6303,0.6137),(17,0.6171,0.6137),(18,0.6268,0.6137),
+           (19,0.6117,0.6117),(20,0.6170,0.6117)]
 
 
+history = pd.DataFrame( columns=['Iteration', 'Score', 'Best Score'])
+
+history['Score'].tolist()[-1]
+len(history['Score'])
+pd.DataFrame({'Iteration': [21], 'Score': [0.544], 'Best Score': [0.544]})
 
 
-
-if __name__ == '__main__':
-
-    # Load data
-    data = load_data(dataset, descriptor=descriptor)
-
-    # Load a model
-    model = models.load_model(data, algorithm, path_to_model)
-    predictions = model.test_predict()
-
-    # Evaluate your model on activity cliff compounds
-    results = evaluation.evaluate(data=data, predictions=predictions)
+## TODO active learning
+# split data train test -> make TSNE
+# optimize model on train
+# train model
+# predict on test
+# find most uncertain compounds
+#
 
 
 

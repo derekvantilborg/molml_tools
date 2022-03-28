@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def calc_rmse(true, pred):
+def rmse(true, pred):
     """ Calculates the Root Mean Square Error
 
     Args:
@@ -13,7 +13,7 @@ def calc_rmse(true, pred):
     return np.sqrt(np.mean(np.square(np.array(true) - np.array(pred))))
 
 
-def calc_q2f3(true, pred, y_train):
+def q2f3(true, pred, y_train):
     """ Calculates the Q2 F3 score (best according to Todeschini et al. 2016)
 
     Args:
@@ -33,3 +33,15 @@ def calc_q2f3(true, pred, y_train):
     q2f3 = 1 - ((press / n_out) / (tss / n_tr))
 
     return q2f3
+
+
+def confusion():
+    raise NotImplementedError
+
+
+def accuracy():
+    raise NotImplementedError
+
+
+def balanced_accuracy():
+    raise NotImplementedError

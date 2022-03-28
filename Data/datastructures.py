@@ -1,9 +1,11 @@
 """ Molecule class that holds everything about a molecule. Based on RDkit"""
 from rdkit import Chem
-from rdkit.Chem import Draw
-import pandas as pd
-from rdkit.Chem.AllChem import GetMorganFingerprintAsBitVect
-from Data.Representations.binary_fingerprints import ecfp
+import numpy as np
+import os
+import shelve
+from Representations.descriptors import ecfp
+from typing import List, Callable
+
 
 class Molecule:
     def __init__(self, smiles: str, y: float = None, id: str = None):
@@ -14,7 +16,7 @@ class Molecule:
     def mol(self):
         return Chem.MolFromSmiles(self.smiles)
 
-    def ecfp(self, to_array: bool = False, radius: int = 2, nbits: int = 1024):
+    def ecfp(self, to_array: bool = True, radius: int = 2, nbits: int = 1024):
         # Calculate the morgan fingerprint
         return ecfp(self.smiles, to_array, radius, nbits)
 
@@ -28,85 +30,89 @@ class Molecule:
 
 
 class Dataset:
-    def __init__(self, molecules: list = None, smiles: list = None, ids: list = None, ys: list = None,
-                 transform=None, target_transform=None):
-
-        self.molecules = molecules
-
-        # if molecules is not None:
-        #     self.smiles, self.ids, self.ys = [], [], []
-        #     for m in molecules:
-        #         self.smiles.append(m.smiles)
-        #         self.ids.append(m.id)
-        #         self.ys.append(m.y)
-        # else:
-        #     self.smiles, self.ids, self.ys = smiles, ids, ys
+    def __init__(self, molecules: List[Molecule] = None, name: str = 'molml_dataset', root: str = ".",
+                 transform: Callable = None, target_transform: Callable = None, post_transform: Callable = None,
+                 post_target_transform: Callable = None):
 
         self.transform = transform
         self.target_transform = target_transform
-        self.filename = None
+        self.post_transform = post_transform
+        self.post_target_transform = post_target_transform
 
-    #
-    # class molecules():
-    #     def __init__(self, smiles, ids=None, ys=None):
-    #         self.smiles = smiles
-    #         self.ids = ids
-    #         self.ys = ys
-    #
-    #     def molecule(self, idx):
-    #         smi = self.smiles[idx]
-    #         id = self.ids[idx] if self.ids is not None else None
-    #         y = self.ys[idx] if self.ys is not None else None
-    #         return Molecule(smi, y, id)
-    #
-    #     def __getitem__(self, idx):
-    #         super.__init__()
-    #         return self.smiles[idx]
+        self.root = root
+        self.name = name
+        self.filename = os.path.join(root, name)
+
+        if molecules is None:
+            if os.path.exists(self.filename + '.db'):
+                with shelve.open(self.filename) as db:
+                    self.molecules = db['molecules']
+            else:
+                raise IOError('File not found. If you have not pre-processed this file, init Dataset with a list of '
+                              'molecules: Dataset(List[Molecule]) and perform Dataset.process(). Otherwise this class'
+                              'has noting to work with :).')
+        else:
+            self.molecules = molecules
 
     def show(self, idx, size: tuple = (500, 500), kekulize: bool = True):
-        if self.molecules is not None:
-            self.molecules[idx].show(size, kekulize)
+        self.molecules[idx].show(size, kekulize)
+
+    def process(self, redo: bool = False):
+
+        # Make intermediate dirs if needed
+        os.makedirs(self.root, exist_ok=True)
+
+        # Check if you already did this
+        if os.path.exists(self.filename + '.db') and not redo:
+            pass
+        else:
+            # Transform x and y and save them to a path
+            with shelve.open(self.filename) as db:
+                for idx, m in enumerate(self.molecules):
+                    if self.transform:
+                        x = self.transform(m.smiles)
+                    if self.target_transform:
+                        y = self.target_transform(m.y)
+
+                    db[str(idx)] = (x, y)
+
+                # save molecules
+                db['molecules'] = self.molecules
+
+    def get_x(self, idx: int = None, to_array: bool = False):
+        """ Return a numpy array of molecules """
+        if idx is None:
+            idx = list(range(len(self)))
+        if type(idx) is int:
+            return self[idx][0] if not to_array else np.array(self[idx][0])
+        else:
+            return [self[i][0] for i in idx] if not to_array else np.array([self[i][0] for i in idx])
+
+    def get_y(self, idx: int = None, to_array: bool = False):
+        """ Return a numpy array of labels """
+        if idx is None:
+            idx = list(range(len(self)))
+        if type(idx) is int:
+            return self[idx][1] if not to_array else np.array(self[idx][1])
+        else:
+            return [self[i][1] for i in idx] if not to_array else np.array([self[i][1] for i in idx])
 
     def __len__(self):
-        return len(self.smiles)
+        return len(self.molecules)
 
     def __getitem__(self, idx):
 
-        x = self.molecules[idx].smiles
-        y = self.molecules[idx].y
-        if self.transform:
-            x = self.transform(x)
-        if self.target_transform:
-            y = self.target_transform(y)
+        # Read from file
+        with shelve.open(self.filename) as db:
+            x, y = db[str(idx)]
+
+        # apply any post-processing functions on the data
+        if self.post_transform:
+            x = self.post_transform(x)
+        if self.post_target_transform:
+            y = self.post_target_transform(y)
+
         return x, y
 
-
-
-
-#
-# import numpy as np
-# #
-# def minlog(x):
-#     return -np.log10(x)
-#
-# def maccs(smi):
-#     from rdkit.Chem import MACCSkeys
-#     return MACCSkeys.GenMACCSKeys(Chem.MolFromSmiles(smi))
-#
-# molecules = read_csv(f"example_data/CHEMBL2047_EC50.csv", smiles_col='smiles', label_col='exp_mean [nM]')
-#
-# data = Dataset(molecules, transform=maccs, target_transform=minlog)
-# # data.read_csv(f"example_data/CHEMBL2047_EC50.csv", smiles_col='smiles', label_col='exp_mean [nM]')
-
-
-
-# molecules[25].show()
-#
-
-# data.molecules[12]
-
-# # # data.show(12)
-# data.show(25)
-#
-# data[25]
-
+    def __repr__(self):
+        return f"Dataset containing {len(self.molecules)} molecules."
