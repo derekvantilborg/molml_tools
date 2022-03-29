@@ -1,0 +1,13 @@
+tqdm
+requests
+twine
+importlib-metadata
+pandas
+numpy
+matplotlib
+seaborn
+chembl_webresource_client
+scikit-learn
+scikit-optimize
+matplotlib
+rdkit-pypi
