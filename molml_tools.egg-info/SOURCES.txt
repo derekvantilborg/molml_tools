@@ -2,10 +2,12 @@ README.md
 setup.py
 molml/__init__.py
 molml/Data/__init__.py
-molml/Data/datastructures.py
-molml/Data/utils.py
 molml/Data/Chembl/__init__.py
 molml/Data/Data_prep/__init__.py
+molml/Data/example_data/__init__.py
+molml/Datastructures/__init__.py
+molml/Datastructures/dataset.py
+molml/Datastructures/molecule.py
 molml/Representations/__init__.py
 molml/Representations/descriptors.py
 molml/Representations/graphs.py
@@ -14,11 +16,11 @@ molml/Tools/__init__.py
 molml/Tools/cluster.py
 molml/Tools/metrics.py
 molml/Tools/optimize.py
+molml/Tools/parsing.py
 molml/Tools/splitting.py
 molml/Tools/utils.py
 molml/Viz/__init__.py
 molml/Viz/multivariate.py
-molml/example_data/__init__.py
 molml_tools.egg-info/PKG-INFO
 molml_tools.egg-info/SOURCES.txt
 molml_tools.egg-info/dependency_links.txt

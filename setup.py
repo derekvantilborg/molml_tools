@@ -3,9 +3,9 @@ from setuptools import setup
 
 setup(
     name='molml_tools',
-    version='1.0.0',
-    packages=['molml', 'molml.Viz', 'molml.Data', 'molml.Data.Chembl', 'molml.Data.Data_prep', 'molml.Tools',
-              'molml.example_data', 'molml.Representations'],
+    version='1.0.1',
+    packages=['molml', 'molml.Viz', 'molml.Data', 'molml.Data.Chembl', 'molml.Data.Data_prep',
+              'molml.Data.example_data', 'molml.Tools', 'molml.Datastructures', 'molml.Representations'],
     url='https://github.com/derekvantilborg/molmlkit',
     license='MIT',
     author='Derek van Tilborg',
@@ -27,5 +27,5 @@ setup(
         'rdkit-pypi'
     ],
     include_package_data=True,
-    package_data={'': ['example_data/*']}
+    package_data={'': ['Data/example_data/*']}
 )
