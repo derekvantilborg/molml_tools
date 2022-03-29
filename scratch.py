@@ -4,13 +4,13 @@
 import pandas as pd
 
 # from Tools.Clustering.butina import cluster_molecules
-from Data.datastructures import Dataset
-from Data.utils import read_csv
-from Representations.descriptors import ecfp, maccs
-from Representations.strings import smiles_one_hot
+from molml.Data.datastructures import Dataset
+from molml.Data import read_csv
+from molml.Representations.descriptors import ecfp
+from molml.Representations.strings import smiles_one_hot
 from sklearn.ensemble import GradientBoostingRegressor
-from Tools.optimize import BayesianOpt
-from Tools.metrics import rmse
+from molml.Tools.optimize import BayesianOpt
+from molml.Tools.metrics import rmse
 import numpy as np
 
 def minlog(x):
@@ -23,8 +23,8 @@ data.process()
 
 data.show(10)
 
-from Tools.cluster import spectral
-from Viz.multivariate import TSNE, PCA
+from molml.Tools.cluster import spectral
+from molml.Viz.multivariate import TSNE, PCA
 import seaborn as sns
 
 clusters = spectral(molecules, k=10)
@@ -40,7 +40,7 @@ pca.show(color_by=clusters, palette=sns.color_palette("hls", 10))
 
 
 
-from Tools.splitting import stratified_split_molecules
+from molml.Tools.splitting import stratified_split_molecules
 
 train, test, val = stratified_split_molecules(molecules, labels=clusters)
 
@@ -89,5 +89,9 @@ pd.DataFrame({'Iteration': [21], 'Score': [0.544], 'Best Score': [0.544]})
 # find most uncertain compounds
 #
 
+# python setup.py bdist_wheel
+# python -m pip install dist/MoleculeACE-1.0.5-py3-none-any.whl
+#
+# twine upload dist/*
 
 

@@ -1,10 +1,12 @@
 from setuptools import setup
 
+
 setup(
-    name='Molml-tools',
+    name='molml_tools',
     version='1.0.0',
-    packages=['Viz', 'Data', 'Data.Chembl', 'Data.Data_prep', 'Tools', 'example_data', 'Representations'],
-    url='https://github.com/derekvantilborg/Molml-tools',
+    packages=['molml', 'molml.Viz', 'molml.Data', 'molml.Data.Chembl', 'molml.Data.Data_prep', 'molml.Tools',
+              'molml.example_data', 'molml.Representations'],
+    url='https://github.com/derekvantilborg/molmlkit',
     license='MIT',
     author='Derek van Tilborg',
     author_email='d.w.v.tilborg@tue.nl',
