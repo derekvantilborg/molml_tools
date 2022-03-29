@@ -20,10 +20,9 @@ class Dataset:
         self.filename = os.path.join(root, name)
 
         if molecules is None:
-            if os.path.exists(self.filename + '.db'):
-                with shelve.open(self.filename) as db:
-                    self.molecules = db['molecules']
-            else:
+            with shelve.open(self.filename) as db:
+                self.molecules = db['molecules']
+            if self.molecules is None or len(self.molecules) == 0:
                 raise IOError('File not found. If you have not pre-processed this file, init Dataset with a list of '
                               'molecules: Dataset(List[Molecule]) and perform Dataset.process(). Otherwise this class'
                               'has noting to work with :).')

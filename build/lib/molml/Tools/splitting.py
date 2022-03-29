@@ -1,5 +1,6 @@
 import random
-from molml.Datastructures.molecule import Dataset, Molecule
+from molml.Datastructures.molecule import Molecule
+from molml.Datastructures.dataset import Dataset
 from typing import List
 import numpy as np
 

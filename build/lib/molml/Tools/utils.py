@@ -1,5 +1,5 @@
 
-from molml.Datastructures.molecule import Dataset
+from molml.Datastructures.dataset import Dataset
 from molml.Tools.splitting import fold_split_random
 from typing import Callable
 

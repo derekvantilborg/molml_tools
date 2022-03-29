@@ -15,9 +15,10 @@ def mols_from_csv(filename: str, smiles_col: str, label_col: str = None, id_col:
     # remove rows containing na's
     if remove_empty_rows:
         df.dropna(axis=0, inplace=True)
+        df.reset_index(drop=True, inplace=True)
 
     molecules = []
-    for idx, smiles in enumerate(df.smiles):
+    for idx, smiles in enumerate(df.smiles.tolist()):
 
         y = df.loc[idx, 'y'] if label_col is not None else None
         id = df.loc[idx, 'id'] if id_col is not None else None
