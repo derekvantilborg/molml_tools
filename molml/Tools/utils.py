@@ -37,10 +37,10 @@ def cross_validate(model: Callable, dataset: Dataset, evaluate: Callable, cv: in
 
         # Get fold data
         train_idx, test_idx = indices
-        x_train_ = [x_train[i] for i in train_idx]
-        y_train_ = [y_train[i] for i in train_idx]
-        x_test_ = [x_test[i] for i in test_idx]
-        y_test_ = [y_test[i] for i in test_idx]
+        x_train_ = np.array([x_train[i] for i in train_idx])
+        y_train_ = np.array([y_train[i] for i in train_idx])
+        x_test_ = np.array([x_test[i] for i in test_idx])
+        y_test_ = np.array([y_test[i] for i in test_idx])
 
         # Train a model
         mod.fit(x_train_, y_train_)

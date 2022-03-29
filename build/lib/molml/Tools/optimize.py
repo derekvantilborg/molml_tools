@@ -25,7 +25,7 @@ class BayesianOpt:
         self.history = pd.DataFrame(columns=['Iteration', 'Score', 'Best Score'])
 
     def opt(self, hyperparameters: Dict[str, list], evaluator: Callable, cv: Union[int, List[Tuple[int, int]]] = 5,
-            n_calls: int = 100, minimize: bool = True):
+            n_calls: int = 100, minimize: bool = True, to_array: bool = True):
         """
 
         Args:
@@ -51,7 +51,7 @@ class BayesianOpt:
 
             try:
                 model = self.model(**params)
-                score = cross_validate(model, self.dataset, evaluator, cv=cv, verbose=False)
+                score = cross_validate(model, self.dataset, evaluator, cv=cv, verbose=False, to_array=to_array)
             except:
                 import warnings
                 warnings.warn(f"Optimization failed using: {params} -- A dummy score is being used, which "
