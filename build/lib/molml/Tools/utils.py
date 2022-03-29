@@ -57,10 +57,10 @@ def cross_validate(model: Callable, dataset: Dataset, evaluate: Callable, cv: in
         if verbose:
             print(f"fold {fold+1}/{len(cv)}: {score}")
 
-        K.clear_session()
+        K.backend.clear_session()
         del mod
 
-    K.clear_session()
+    K.backend.clear_session()
     del model
 
     estimated_score = np.mean(scores)
