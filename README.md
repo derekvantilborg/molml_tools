@@ -6,7 +6,7 @@
 
 A small toolkit for molecular machine learning
 
-##Features
+## Features
 ***
 
 - Easy to use clustering and data vizualization tools
