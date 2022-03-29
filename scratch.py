@@ -4,7 +4,7 @@
 import pandas as pd
 
 # from Tools.Clustering.butina import cluster_molecules
-from molml.Data.datastructures import Dataset
+from molml.Datastructures.molecule import Dataset
 from molml.Data import read_csv
 from molml.Representations.descriptors import ecfp
 from molml.Representations.strings import smiles_one_hot

@@ -1,5 +1,5 @@
 from typing import List, Callable, Any
-from molml.Data.datastructures import Molecule
+from molml.Datastructures.molecule import Molecule
 from sklearn.manifold import TSNE as sklearn_tsne
 from sklearn.decomposition import PCA as sklearn_PCA
 import numpy as np

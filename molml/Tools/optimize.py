@@ -1,4 +1,4 @@
-from molml.Data.datastructures import Dataset
+from molml.Datastructures.molecule import Dataset
 from molml.Tools.utils import create_search_space, cross_validate
 from skopt.utils import use_named_args
 from skopt import gp_minimize

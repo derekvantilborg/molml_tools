@@ -1,4 +1,4 @@
-from molml.Data.datastructures import Molecule
+from molml.Datastructures.molecule import Molecule
 import pandas as pd
 
 def read_csv(filename: str, smiles_col: str, label_col: str = None, id_col: str = None,

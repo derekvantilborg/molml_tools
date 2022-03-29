@@ -4,3 +4,4 @@ from molml.Tools.optimize import BayesianOpt
 from molml.Tools.splitting import fold_split_random, fold_split_stratified, random_split_molecules, \
     stratified_split_molecules
 from molml.Tools.utils import cross_validate
+from molml.Tools.parsing import mols_from_csv

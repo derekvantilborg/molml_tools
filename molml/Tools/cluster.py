@@ -1,5 +1,5 @@
 from typing import Callable, List
-from molml.Data.datastructures import Molecule
+from molml.Datastructures.molecule import Molecule
 import numpy as np
 
 
