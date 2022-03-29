@@ -11,3 +11,4 @@ scikit-learn
 scikit-optimize
 matplotlib
 rdkit-pypi
+keras

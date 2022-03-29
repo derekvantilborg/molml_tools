@@ -2,6 +2,7 @@
 from molml.Datastructures.dataset import Dataset
 from molml.Tools.splitting import fold_split_random
 from typing import Callable
+import keras as K
 
 
 def cross_validate(model: Callable, dataset: Dataset, evaluate: Callable, cv: int = 5, random_state: int = 42,
@@ -29,10 +30,12 @@ def cross_validate(model: Callable, dataset: Dataset, evaluate: Callable, cv: in
     y_train = dataset.get_y(to_array=to_array)
     x_test = dataset.get_x(to_array=to_array)
     y_test = dataset.get_y(to_array=to_array)
+    mod = None
 
     scores = []
     for fold, indices in enumerate(cv):
         # Copy a version of the model for this cv-fold
+
         mod = deepcopy(model)
 
         # Get fold data
@@ -53,6 +56,12 @@ def cross_validate(model: Callable, dataset: Dataset, evaluate: Callable, cv: in
         scores.append(score)
         if verbose:
             print(f"fold {fold+1}/{len(cv)}: {score}")
+
+        K.clear_session()
+        del mod
+
+    K.clear_session()
+    del model
 
     estimated_score = np.mean(scores)
 
