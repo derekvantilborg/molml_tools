@@ -24,7 +24,8 @@ setup(
         'scikit-learn',
         'scikit-optimize',
         'matplotlib',
-        'rdkit-pypi'
+        'rdkit-pypi',
+        'keras'
     ],
     include_package_data=True,
     package_data={'': ['Data/example_data/*']}
