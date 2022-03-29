@@ -4,6 +4,8 @@ from skopt.utils import use_named_args
 from skopt import gp_minimize
 import pandas as pd
 from typing import Dict, Callable, Union, List, Tuple
+import keras as K
+import gc
 
 
 class BayesianOpt:
@@ -23,7 +25,7 @@ class BayesianOpt:
         self.best_score = None
         self.best_hyperparameters = None
         self.result = None
-        self.history = pd.DataFrame(columns=['Iteration', 'Score', 'Best Score'])
+        self.history = pd.DataFrame(columns=['Iteration', 'Score', 'Best Score', 'Params'])
 
     def opt(self, hyperparameters: Dict[str, list], evaluator: Callable, cv: Union[int, List[Tuple[int, int]]] = 5,
             n_calls: int = 100, minimize: bool = True, to_array: bool = True, outfile: str = None):
@@ -69,10 +71,16 @@ class BayesianOpt:
 
             print(f"Iteration {self.iteration}/{n_calls} - score: {score:.4f} - best: {self.best_score:.4f}")
             self.history = pd.concat([self.history, pd.DataFrame({'Iteration': [self.iteration], 'Score': [score],
-                                                                  'Best Score': [self.best_score]})], ignore_index=True)
+                                                                  'Best Score': [self.best_score],
+                                                                  'Params': [str(params)]})],
+                                     ignore_index=True)
 
             if outfile is not None:
                 self.history.to_csv(outfile)
+
+            K.backend.clear_session()
+            del model
+            gc.collect()
 
             return -1 * score if not minimize else score
 

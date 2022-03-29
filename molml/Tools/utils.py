@@ -3,6 +3,7 @@ from molml.Datastructures.dataset import Dataset
 from molml.Tools.splitting import fold_split_random
 from typing import Callable
 import keras as K
+import gc
 
 
 def cross_validate(model: Callable, evaluate: Callable, dataset: Dataset, cv: int = 5, random_state: int = 42,
@@ -60,7 +61,8 @@ def cross_validate(model: Callable, evaluate: Callable, dataset: Dataset, cv: in
         del mod
 
     K.backend.clear_session()
-    del model
+    del model, x_train, y_train, x_test, y_test
+    gc.collect()
 
     estimated_score = np.mean(scores)
 
