@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='molml_tools',
-    version='1.0.9',
+    version='1.0.10',
     packages=['molml', 'molml.Viz', 'molml.Data', 'molml.Data.Chembl', 'molml.Data.Data_prep',
               'molml.Data.example_data', 'molml.Tools', 'molml.Datastructures', 'molml.Representations'],
     url='https://github.com/derekvantilborg/molmlkit',

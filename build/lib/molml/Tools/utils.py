@@ -5,7 +5,8 @@ from typing import Callable
 import keras as K
 
 
-def cross_validate(model: Callable, dataset: Dataset, evaluate: Callable, cv: int = 5, random_state: int = 42,
+def cross_validate(model: Callable, evaluate: Callable, x_train = None, y_train = None, x_test = None, y_test = None,
+                   dataset: Dataset = None, cv: int = 5, random_state: int = 42,
                    verbose: bool = True, to_array: bool = True):
     """ Cross validate a model in folds
 
@@ -26,11 +27,14 @@ def cross_validate(model: Callable, dataset: Dataset, evaluate: Callable, cv: in
     if type(cv) is int:
         cv = fold_split_random(dataset, random_state=random_state, folds=cv)
 
-    x_train = dataset.get_x(to_array=to_array)
-    y_train = dataset.get_y(to_array=to_array)
-    x_test = dataset.get_x(to_array=to_array)
-    y_test = dataset.get_y(to_array=to_array)
-    mod = None
+    if x_train is None or y_train is None or x_test is None or y_test is None:
+        if Dataset is None:
+            raise ValueError('Dataset or x_train, y_train, x_test, y_test parameters are missing')
+        else:
+            x_train = dataset.get_x(to_array=to_array)
+            y_train = dataset.get_y(to_array=to_array)
+            x_test = dataset.get_x(to_array=to_array)
+            y_test = dataset.get_y(to_array=to_array)
 
     scores = []
     for fold, indices in enumerate(cv):

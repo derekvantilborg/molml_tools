@@ -7,7 +7,7 @@ from typing import Dict, Callable, Union, List, Tuple
 
 
 class BayesianOpt:
-    def __init__(self, model: Callable, x_train=None, y_train=None, x_test=None, y_test=None, dataset: Dataset = None):
+    def __init__(self, model: Callable, dataset: Dataset = None):
         """ Bayesian hyperparameter optimization
 
         Args:
@@ -18,10 +18,6 @@ class BayesianOpt:
         """
         self.model = model
         self.dataset = dataset
-        self.x_train = x_train
-        self.y_train = y_train
-        self.x_test = x_test
-        self.y_test = y_test
 
         self.hyperparameters = None
         self.best_score = None
@@ -56,8 +52,7 @@ class BayesianOpt:
 
             try:
                 model = self.model(**params)
-                score = cross_validate(model, evaluator, x_train=self.x_train, y_train=self.y_train, x_test=self.x_test,
-                                       y_test=self.y_test, dataset=self.dataset, cv=cv, verbose=False,
+                score = cross_validate(model, evaluator, dataset=self.dataset, cv=cv, verbose=False,
                                        to_array=to_array)
             except:
                 import warnings
